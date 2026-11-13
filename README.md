@@ -114,4 +114,4 @@ More projects: [gitshow](https://github.com/ofershap/gitshow) · [real-browser-m
 
 ## License
 
-[MIT](LICENSE) &copy; [Ofer Shapira](https://github.com/ofershap) The embedded Tailwind v3.4.19 preflight is MIT, Tailwind Labs - see [licenses/](licenses/).
+[MIT](LICENSE) &copy; [Ofer Shapira](https://github.com/ofershap). The embedded Tailwind v3.4.19 preflight is MIT, Tailwind Labs - see [licenses/](licenses/).
