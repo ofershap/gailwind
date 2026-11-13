@@ -42,18 +42,39 @@ func Extract(sources ...string) []string {
 	return out
 }
 
+var classAttrRe = regexp.MustCompile("(?i)class(?:Name)?\\s*=\\s*[\"'{]([^\"'`}]+)")
+
+// declaredClasses returns the tokens appearing inside class="..." attributes.
+func declaredClasses(sources []string) map[string]bool {
+	out := map[string]bool{}
+	for _, src := range sources {
+		for _, m := range classAttrRe.FindAllStringSubmatch(src, -1) {
+			for _, tok := range strings.Fields(m[1]) {
+				out[tok] = true
+			}
+		}
+	}
+	return out
+}
+
 // Generate compiles sources to CSS plus a report of unknown candidates.
 func Generate(sources ...string) (string, Report) {
 	candidates := Extract(sources...)
+	declared := declaredClasses(sources)
 	var rules []rule
 	var rep Report
 	for _, c := range candidates {
 		r, ok := compileClass(c)
 		if !ok {
-			// Only flag candidates that look like utilities (dashed, bracketed,
-			// or variant-prefixed); plain words like "class" or "div" are
-			// extraction noise, not unknown classes.
-			if strings.ContainsAny(c, "-[:/") {
+			// Report only tokens the author wrote in a class attribute;
+			// other extraction noise (SVG path data, prose) is not a class.
+			// For sources without class attributes, fall back to a
+			// utility-shape heuristic.
+			if len(declared) > 0 {
+				if declared[c] {
+					rep.Unknown = append(rep.Unknown, c)
+				}
+			} else if strings.ContainsAny(c, "-[:/") {
 				rep.Unknown = append(rep.Unknown, c)
 			}
 			continue

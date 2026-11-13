@@ -507,10 +507,14 @@ func init() {
 	register("flexShrink", nil, statics(
 		"shrink", "flex-shrink: 1",
 		"shrink-0", "flex-shrink: 0",
+		"flex-shrink", "flex-shrink: 1",
+		"flex-shrink-0", "flex-shrink: 0",
 	))
 	register("flexGrow", nil, statics(
 		"grow", "flex-grow: 1",
 		"grow-0", "flex-grow: 0",
+		"flex-grow", "flex-grow: 1",
+		"flex-grow-0", "flex-grow: 0",
 	))
 	register("scale", nil, func(base string) ([]decl, bool) {
 		scaleVals := map[string]string{"0": "0", "50": ".5", "75": ".75", "90": ".9", "95": ".95", "100": "1", "105": "1.05", "110": "1.1", "125": "1.25", "150": "1.5"}
@@ -669,6 +673,32 @@ func init() {
 		if v, ok := arbitrary(base, "rounded"); ok {
 			return d("border-radius", v), true
 		}
+		sides := map[string][]string{
+			"t": {"top-left-radius", "top-right-radius"},
+			"b": {"bottom-left-radius", "bottom-right-radius"},
+			"l": {"top-left-radius", "bottom-left-radius"},
+			"r": {"top-right-radius", "bottom-right-radius"},
+		}
+		for side, corners := range sides {
+			if base == "rounded-"+side {
+				var out []decl
+				for _, c := range corners {
+					out = append(out, decl{"border-" + c, t.BorderRadius["DEFAULT"]})
+				}
+				return out, true
+			}
+			if n, ok := strings.CutPrefix(base, "rounded-"+side+"-"); ok {
+				v, ok := t.BorderRadius[n]
+				if !ok {
+					return nil, false
+				}
+				var out []decl
+				for _, c := range corners {
+					out = append(out, decl{"border-" + c, v})
+				}
+				return out, true
+			}
+		}
 		return scaleLookup(base, "rounded-", t.BorderRadius, "border-radius")
 	})
 	register("borderWidth", nil, func(base string) ([]decl, bool) {
@@ -677,8 +707,14 @@ func init() {
 			return d("border-width", "1px"), true
 		}
 		for _, side := range []string{"t", "b", "l", "r"} {
+			full := map[string]string{"t": "top", "b": "bottom", "l": "left", "r": "right"}[side]
 			if base == "border-"+side {
-				return d("border-"+map[string]string{"t": "top", "b": "bottom", "l": "left", "r": "right"}[side]+"-width", "1px"), true
+				return d("border-"+full+"-width", "1px"), true
+			}
+			if n, ok := strings.CutPrefix(base, "border-"+side+"-"); ok {
+				if w, ok := map[string]string{"0": "0px", "2": "2px", "4": "4px", "8": "8px"}[n]; ok {
+					return d("border-"+full+"-width", w), true
+				}
 			}
 		}
 		if n, ok := strings.CutPrefix(base, "border-"); ok {
@@ -708,6 +744,14 @@ func init() {
 		}
 		return colorDecls(base, "bg-", "background-color", "--tw-bg-opacity")
 	})
+	register("fill", nil, staticsLex(
+		"fill-none", "fill: none",
+		"fill-inherit", "fill: inherit",
+		"fill-current", "fill: currentColor",
+		"fill-transparent", "fill: transparent",
+		"fill-black", "fill: #000",
+		"fill-white", "fill: #fff",
+	))
 	register("padding", [][]string{{"p"}, {"px", "py"}, {"ps", "pe", "pt", "pr", "pb", "pl"}}, func(base string) ([]decl, bool) {
 		return spacingBox(base, "p", "padding")
 	})
@@ -716,6 +760,16 @@ func init() {
 		"text-center", "text-align: center",
 		"text-right", "text-align: right",
 		"text-justify", "text-align: justify",
+	))
+	register("verticalAlign", nil, statics(
+		"align-baseline", "vertical-align: baseline",
+		"align-top", "vertical-align: top",
+		"align-middle", "vertical-align: middle",
+		"align-bottom", "vertical-align: bottom",
+		"align-text-top", "vertical-align: text-top",
+		"align-text-bottom", "vertical-align: text-bottom",
+		"align-sub", "vertical-align: sub",
+		"align-super", "vertical-align: super",
 	))
 	register("fontSize", nil, func(base string) ([]decl, bool) {
 		if v, ok := arbitrary(base, "text"); ok && looksLikeSize(v) {
