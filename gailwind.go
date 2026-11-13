@@ -57,7 +57,10 @@ func declaredClasses(sources []string) map[string]bool {
 	return out
 }
 
-// Generate compiles sources to CSS plus a report of unknown candidates.
+// Generate compiles sources to utility CSS plus a report of unknown
+// candidates, including container rules when `container` is used. The CLI
+// prepends the embedded v3.4.19 preflight (Tailwind Labs, MIT; see
+// licenses/) unless -no-preflight is given.
 func Generate(sources ...string) (string, Report) {
 	candidates := Extract(sources...)
 	declared := declaredClasses(sources)
@@ -81,6 +84,23 @@ func Generate(sources ...string) (string, Report) {
 		}
 		rules = append(rules, r)
 		rep.Generated++
+	}
+	// v3's container also emits a max-width rule per screen breakpoint.
+	used := map[string]bool{}
+	for _, c := range candidates {
+		used[c] = true
+	}
+	if used["container"] {
+		for _, sc := range []string{"sm", "md", "lg", "xl", "2xl"} {
+			rules = append(rules, rule{
+				selector: ".container",
+				decls:    []decl{{"max-width", theme0.Screens[sc]}},
+				variants: []string{sc},
+				family:   familyIndex["container"],
+				cls:      "container",
+				base:     "container",
+			})
+		}
 	}
 	sortRules(rules)
 	return emit(withKeyframes(rules)), rep

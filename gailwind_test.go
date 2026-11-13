@@ -69,6 +69,19 @@ func TestVariants(t *testing.T) {
 	}
 }
 
+func TestContainer(t *testing.T) {
+	css := compileOne(t, "container")
+	if !strings.Contains(css, ".container { width: 100%") {
+		t.Errorf("container base missing: %q", css)
+	}
+	if !strings.Contains(css, "@media (min-width: 640px)") || !strings.Contains(css, "max-width: 640px") {
+		t.Errorf("container sm max-width missing: %q", css)
+	}
+	if !strings.Contains(css, "max-width: 1536px") {
+		t.Errorf("container 2xl max-width missing: %q", css)
+	}
+}
+
 func TestUnknownReportedNotDropped(t *testing.T) {
 	_, rep := Generate(`<div class="totally-made-up-thing animate-weirdness"></div>`)
 	if len(rep.Unknown) == 0 {

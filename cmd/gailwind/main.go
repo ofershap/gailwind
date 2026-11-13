@@ -11,12 +11,14 @@ import (
 	"strings"
 
 	"github.com/ofershap/gailwind"
+	"github.com/ofershap/gailwind/preflight"
 )
 
 func main() {
 	out := flag.String("o", "", "output CSS file (default stdout)")
 	minify := flag.Bool("minify", false, "minify output")
 	strict := flag.Bool("strict", false, "exit 1 if any candidate class is unknown")
+	noPreflight := flag.Bool("no-preflight", false, "omit the embedded v3.4.19 base reset (preflight)")
 	flag.Parse()
 	files := flag.Args()
 	if len(files) == 0 {
@@ -39,6 +41,9 @@ func main() {
 		}
 	}
 	css, rep := gailwind.Generate(sources...)
+	if !*noPreflight {
+		css = preflight.CSS() + css
+	}
 	if *minify {
 		css = minifyCSS(css)
 	}
