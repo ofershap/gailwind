@@ -220,16 +220,6 @@ func compileClass(cls string) (rule, bool) {
 	}, true
 }
 
-func nonMediaVariants(vs []string) []string {
-	var out []string
-	for _, v := range vs {
-		if !isMediaVariant(v) {
-			out = append(out, v)
-		}
-	}
-	return out
-}
-
 func isMediaVariant(v string) bool {
 	switch v {
 	case "dark", "sm", "md", "lg", "xl", "2xl", "portrait", "landscape", "motion-safe", "motion-reduce", "print":

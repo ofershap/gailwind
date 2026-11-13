@@ -22,8 +22,6 @@ type decl struct {
 	value string
 }
 
-func (r rule) key() string { return r.cls }
-
 // variantRank orders variant layers to match v3's observed output:
 // base < structural/state pseudos < group/peer < screens < dark.
 func variantRank(v string) int {

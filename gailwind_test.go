@@ -98,7 +98,8 @@ func TestOrderingBaseBeforeHoverBeforeScreensBeforeDark(t *testing.T) {
 			t.Fatalf("missing %s in %q", sel, css)
 		}
 	}
-	if !(idx[".m-3"] < idx[".first\\:m-7"] && idx[".first\\:m-7"] < idx[".hover\\:m-2"] && idx[".hover\\:m-2"] < idx[".xl\\:m-1"] && idx[".xl\\:m-1"] < idx[".dark\\:m-9"]) {
+	ordered := idx[".m-3"] < idx[".first\\:m-7"] && idx[".first\\:m-7"] < idx[".hover\\:m-2"] && idx[".hover\\:m-2"] < idx[".xl\\:m-1"] && idx[".xl\\:m-1"] < idx[".dark\\:m-9"]
+	if !ordered {
 		t.Fatalf("order wrong: %v\n%s", idx, css)
 	}
 }
