@@ -1,0 +1,19 @@
+# gailwind
+
+> Tailwind v3.4.19 utility CSS compiled from Go source files by a pure-Go
+> engine. Importable library (github.com/ofershap/gailwind) plus a CLI
+> (cmd/gailwind). Scope: default-theme core utility set with variants,
+> arbitrary values, real embedded preflight and container. Not a full
+> Tailwind port: no plugins, no custom themes/config, no @apply. Unknown
+> classes are reported on stderr and fail the build under -strict.
+
+## Usage
+
+- CLI: gailwind -o app.css './templates/**/*.templ' './web/**/*.html' (-minify, -strict, -no-preflight).
+- Library: css, report := gailwind.Generate(src1, src2); report.Unknown lists uncompilable class-attribute tokens.
+- Output matches tailwindcss@3.4.19 rule order for the implemented corpus (290/290 declaration parity; 206/206 on the tailwindtoolbox Landing-Page template).
+
+## Docs
+
+- [README](https://github.com/ofershap/gailwind#readme): install, feature scope, measured fidelity, Q&A
+- [pkg.go.dev](https://pkg.go.dev/github.com/ofershap/gailwind): library API
