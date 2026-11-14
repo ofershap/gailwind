@@ -60,7 +60,7 @@ css, report := gailwind.Generate(source1, source2)
 
 ## Measured fidelity
 
-Verified against the real `tailwindcss@3.4.19` CLI, not self-reported:
+Verified against the real [`tailwindcss@3.4.19`](https://github.com/tailwindlabs/tailwindcss) CLI, not self-reported:
 
 - **290/290 rules - 100% declaration match, 0 order inversions** on the implemented-feature corpus (`testdata/corpus.html`, ~200 classes across every implemented family, including variant stacks, negatives and arbitrary values). Reproduce with `parity/parity.py`.
 - **Real-template check:** on the unmodified [tailwindtoolbox Landing-Page](https://github.com/tailwindtoolbox/Landing-Page), gailwind's full output (preflight + container + utilities) matches the real v3.4.19 build on **206/206 flattened rules - 100% declaration match**. Of 169 class-attribute candidates, 160 generated; the 9 reported unknowns are v2-era classes real v3.4.19 doesn't generate either, plus the template's own custom classes. Element-anchored side-by-side renders are visually identical.
